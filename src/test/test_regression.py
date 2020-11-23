@@ -15,7 +15,7 @@ def univariate_linear_problem():
 class TestLeastSquares: 
     def test_univariate_correctness(self, univariate_linear_problem): 
         inputs, targets, params = univariate_linear_problem
-        assert np.allclose(least_squares_fit(inputs, targets), params)
+        assert np.allclose(least_squares_fit(inputs, targets, add_bias=False), params)
 
 class TestBasisRegression: 
     pass 
