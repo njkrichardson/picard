@@ -8,7 +8,7 @@ import numpy as np
 import numpy.ranodm as npr 
 from import numpy.linalg import chol, norm 
 
-from constants import cache_config
+from constants import cache
 
 cholesky = chol 
 
@@ -16,7 +16,8 @@ cholesky = chol
 Utilities for serializing and caching several datasets for quick prototyping
 """
 
-def _clean_cache(cache: str): 
+def _clean_cache(): 
+    global cache
     rmtree(cache)
     makedirs(cache) 
 
@@ -25,7 +26,7 @@ def _setup_cache_dir(overwrite: bool = False):
 
     # create a cache directory, or optionally overwrite an existing one 
     if exists(cache) and overwrite: 
-        _clean_cache(cache)
+        _clean_cache()
     elif exists(cache): 
         warn("tried to setup a cache directory but one already exists")
         raise OSError
@@ -33,7 +34,9 @@ def _setup_cache_dir(overwrite: bool = False):
         makedirs(cache); 
 
 def synthetic_regression(overwrite: bool = False, **kwargs) -> list: 
+    global cache 
     path = join(cache, "synthetic_regression.npy")
+
     if exists(path) and overwrite is True: 
         remove(path)
     elif exists(path): 
