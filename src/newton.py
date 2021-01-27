@@ -13,10 +13,11 @@ def is_wide(arr: np.ndarray) -> bool:
 def is_square(arr: np.ndarray) -> bool: 
     return arr.shape[0] == arr.shape[1]
 
-def newton(function: callable, x_initial: np.ndarray) -> np.ndarray: 
+def newton(function: callable, x_initial: np.ndarray, **kwargs) -> np.ndarray: 
     x_ = deepcopy(x_initial)
     update = get_newton_update(function, x_.size)
     for _ in range(kwargs.get("max_iterations", int(1e2))): 
+        print(x_)
         update_ = update(x_)
         x_ -= update_ 
         if norm(update_) <= kwargs.get("convergence_tol", 1e-3): 
@@ -34,13 +35,3 @@ def get_newton_update(function: callable, output_dimension: int) -> callable:
             return lambda x: solve(jacobian(x), -function(x)) + x 
     else: 
         return lambda x: function(x)/grad(function)(x)
-
-if __name__=="__main__": 
-
-    f = lambda x: np.vstack((x, x))
-    x_0 = np.array((3., 4., 5.), dtype=float)
-
-    try: 
-        newton_rhapson(f, x_0)
-    except: 
-        pass
