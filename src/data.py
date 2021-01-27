@@ -1,4 +1,8 @@
+from os import makedirs, rmdir, remove
+from os.path import exists, join
 from pickle import dump 
+from shutil import rmtree
+from warnings import warn 
 
 import numpy as np 
 import numpy.ranodm as npr 
@@ -12,45 +16,28 @@ cholesky = chol
 Utilities for serializing and caching several datasets for quick prototyping
 """
 
-"""
-TODO: 
-    * cache dir paths and names in a constants module 
-    * setup serialization 
-"""
+def _clean_cache(cache: str): 
+    rmtree(cache)
+    makedirs(cache) 
 
 def _setup_cache_dir(overwrite: bool = False): 
-    # TODO: finish setting this up and testing it 
-    raise NotImplementedError
-    global cache_config
-    root = cache_config["root"]
+    global cache
 
     # create a cache directory, or optionally overwrite an existing one 
-    from os import makedirs, rmdir
-    from os.path import exists, join
-    from shutil import rmtree
-
-    if exists(root) and overwrite: 
-        rmtree(root)
-        makedirs(root) 
-    elif exists(root): 
-        # TODO: logging or warning message, don't just fail silently 
+    if exists(cache) and overwrite: 
+        _clean_cache(cache)
+    elif exists(cache): 
+        warn("tried to setup a cache directory but one already exists")
         raise OSError
+    else: 
+        makedirs(cache); 
 
-    makedirs(root); 
-
-    # create the top level subdirectories 
-    for dataset_type in cache_config["top_level"]: 
-        makedirs(join(root, dataset_type))
-
-    # regression (getting paths like this is redundant... rethink this) 
-    regression_path = join(root, "regression") 
-    dump(synthetic_regression(cache=True), regression_path) 
-
-    # classification 
-    classification_path = join(root, "classification") 
-    dump()
-
-def synthetic_regression(cache: bool = False, **kwargs): 
+def synthetic_regression(overwrite: bool = False, **kwargs) -> list: 
+    path = join(cache, "synthetic_regression.npy")
+    if exists(path) and overwrite is True: 
+        remove(path)
+    elif exists(path): 
+        return np.load(path, allow_pickle=True)
 
     def _construct_covariance_matrix(x: np.ndarray, y: np.ndarray, covariance: callable) -> np.ndarray: 
         n, m = len(x), len(y) 
@@ -67,15 +54,8 @@ def synthetic_regression(cache: bool = False, **kwargs):
     covariance_matrix = _construct_covariance_matrix(inputs, inputs, covariance) 
     sqrt_covariance_matrix, _  = cholesky(covariance_matrix) 
     targets = sqrt_covariance_matrix @ npr.randn(len(inputs)) + mean(inputs)[:, None]
-    
-    if cache is True: 
-        return dict(
-                inputs=inputs, 
-                targets=targets, 
-                meta=dict(description="synthetic regression data sampled from a rbf gaussian process"))
-    else: 
-        return targets 
 
-def synthetic_classification(cache: bool = True): 
-    n_classes, n_per_class = map(kwargs.get, (("n_classes", 3), ("n_per_class", 25)))
+    np.save(path, [inputs, targets], allow_pickle=True)
+
+def synthetic_classification(): 
     raise NotImplementedError
