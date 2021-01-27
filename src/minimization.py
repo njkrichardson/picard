@@ -15,7 +15,7 @@ def is_square(arr: np.ndarray) -> bool:
 
 def newton(function: callable, x_initial: np.ndarray, **kwargs) -> np.ndarray: 
     x_ = deepcopy(x_initial)
-    update = get_newton_update(function, x_.size)
+    update = _get_newton_update(function, x_.size)
     for _ in range(kwargs.get("max_iterations", int(1e2))): 
         print(x_)
         update_ = update(x_)
@@ -24,7 +24,7 @@ def newton(function: callable, x_initial: np.ndarray, **kwargs) -> np.ndarray:
             break 
     return x_ 
 
-def get_newton_update(function: callable, output_dimension: int) -> callable: 
+def _get_newton_update(function: callable, output_dimension: int) -> callable: 
     if output_dimension > 1: 
         if is_tall(jacobian) is True: 
             def _newton_update(x: np.ndarray) -> np.ndarray: 
@@ -35,3 +35,13 @@ def get_newton_update(function: callable, output_dimension: int) -> callable:
             return lambda x: solve(jacobian(x), -function(x)) + x 
     else: 
         return lambda x: function(x)/grad(function)(x)
+
+def gradient_descent(function: callable, x_initial: np.ndarray, **kwargs) -> np.ndarray: 
+    x_ = deepcopy(x_initial)
+    gradient = grad(function)
+    for _ in range(kwargs.get("max_iterations", int(1e2))): 
+        x_ -= kwargs.get("step_size", 1e-2) * gradient(x_)
+        if norm(x_) < kwargs.get("convergence_tol", 1e-3): 
+            break 
+    return x_ 
+
