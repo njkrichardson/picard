@@ -1,46 +1,38 @@
 from os import makedirs, rmdir, remove
 from os.path import exists, join
-from pickle import dump 
+from pickle import dump, load
 from shutil import rmtree
 from warnings import warn 
 
 import numpy as np 
-import numpy.ranodm as npr 
-from import numpy.linalg import chol, norm 
+import numpy.random as npr 
+from numpy.linalg import cholesky, norm 
 
 from constants import cache
-
-cholesky = chol 
 
 """
 Utilities for serializing and caching several datasets for quick prototyping
 """
-
-def _clean_cache(): 
+ 
+def _setup_cache(overwrite: bool = False): 
     global cache
-    rmtree(cache)
-    makedirs(cache) 
-
-def _setup_cache_dir(overwrite: bool = False): 
-    global cache
-
-    # create a cache directory, or optionally overwrite an existing one 
-    if exists(cache) and overwrite: 
-        _clean_cache()
+    if exists(cache) and overwrite is True: 
+        rmtree(cache)
     elif exists(cache): 
-        warn("tried to setup a cache directory but one already exists")
-        raise OSError
+        pass 
     else: 
-        makedirs(cache); 
+        makedirs(cache) 
 
-def synthetic_regression(overwrite: bool = False, **kwargs) -> list: 
+def synthetic_regression(overwrite: bool = False, **kwargs) -> dict: 
     global cache 
+    _setup_cache() 
     path = join(cache, "synthetic_regression.npy")
 
     if exists(path) and overwrite is True: 
         remove(path)
     elif exists(path): 
-        return np.load(path, allow_pickle=True)
+        with open(path, 'rb') as source: 
+            return load(source)
 
     def _construct_covariance_matrix(x: np.ndarray, y: np.ndarray, covariance: callable) -> np.ndarray: 
         n, m = len(x), len(y) 
@@ -52,13 +44,17 @@ def synthetic_regression(overwrite: bool = False, **kwargs) -> list:
 
     inputs = kwargs.get("inputs", np.linspace(-3, 3, 25))
     covariance = kwargs.get("covariance", lambda x, y: np.exp(-norm(x-y) / kwargs.get("length_scale", 1)))
-    mean = kwargs.get("mean", lambda x: 0)
+    mean = kwargs.get("mean", lambda x: 0 * x)
 
     covariance_matrix = _construct_covariance_matrix(inputs, inputs, covariance) 
-    sqrt_covariance_matrix, _  = cholesky(covariance_matrix) 
-    targets = sqrt_covariance_matrix @ npr.randn(len(inputs)) + mean(inputs)[:, None]
+    sqrt_covariance_matrix = cholesky(covariance_matrix) 
+    targets = sqrt_covariance_matrix @ npr.randn((len(inputs))) + mean(inputs)[:, None]
 
-    np.save(path, [inputs, targets], allow_pickle=True)
+    data_dict = dict(inputs=inputs, targets=targets, descr="synthetic regression dataset")
+    with open(path, "wb") as destination:
+        dump(data_dict, destination)
+
+    return data_dict
 
 def synthetic_classification(): 
     raise NotImplementedError
