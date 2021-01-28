@@ -1,4 +1,5 @@
 import pytest 
+import pathing
 
 class TestKNN: 
     pass 

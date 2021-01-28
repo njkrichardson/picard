@@ -2,6 +2,9 @@ import numpy as np
 import numpy.random as npr 
 import pytest 
 
+import sys
+print(sys.path)
+import pathing
 from regression import least_squares_fit
 
 @pytest.fixture
