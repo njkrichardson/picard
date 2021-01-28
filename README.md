@@ -1,4 +1,4 @@
-## Reduced instruction set machine learning
+## Reduced instruction set machine learning [![Build Status](https://travis-ci.com/njkrichardson/picard.svg?branch=master)](https://travis-ci.com/njkrichardson/picard)
 
 Picard is a Python package with thorough eductional reference implementations of many common programs used for machine learning and scientific computing. Picard is a piece of educational software in the sense that the implementation is designed to maximize pedagogical objectives, as opposed to objectives related to performance or reliability. Below I list the "instruction set" (a small set of primitive functions) that Picard derives from.
 
