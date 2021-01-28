@@ -1,0 +1,22 @@
+absl-py==0.11.0
+certifi==2020.12.5
+cycler==0.10.0
+flatbuffers==1.12
+greenlet @ file:///Users/runner/miniforge3/conda-bld/greenlet_1610318636739/work
+jax==0.2.8
+jaxlib==0.1.59
+jedi @ file:///opt/concourse/worker/volumes/live/823993bf-82f4-468e-69b7-06a305e2e4fb/volume/jedi_1608920705857/work
+kiwisolver @ file:///opt/concourse/worker/volumes/live/6dee099b-3849-4b61-575b-0e9f54a3bd23/volume/kiwisolver_1607570822545/work
+matplotlib @ file:///opt/concourse/worker/volumes/live/6db3817d-447c-451b-528a-2d6904862fb7/volume/matplotlib-base_1607974634094/work
+msgpack @ file:///opt/concourse/worker/volumes/live/658df3e8-28f6-477c-470e-83e6508d55d8/volume/msgpack-python_1607965815484/work
+numpy @ file:///opt/concourse/worker/volumes/live/317d3633-3972-452c-494a-92900a1134d5/volume/numpy_and_numpy_base_1607448161283/work
+olefile==0.46
+opt-einsum==3.3.0
+parso==0.7.0
+Pillow @ file:///opt/concourse/worker/volumes/live/908c4bb7-c693-4f3a-5005-76a88fd03165/volume/pillow_1609786795096/work
+pynvim @ file:///Users/runner/miniforge3/conda-bld/pynvim_1602439727742/work
+pyparsing @ file:///home/linux1/recipes/ci/pyparsing_1610983426697/work
+python-dateutil==2.8.1
+scipy==1.6.0
+six @ file:///opt/concourse/worker/volumes/live/34b5b2b5-c9cb-44fb-4b8e-8a9a881bfa35/volume/six_1605205329242/work
+tornado @ file:///opt/concourse/worker/volumes/live/2c1a63a2-006b-48ee-56b9-0cfe8b4927f9/volume/tornado_1606942321278/work

@@ -2,7 +2,6 @@ from os import makedirs, rmdir, remove
 from os.path import exists, join
 from pickle import dump, load
 from shutil import rmtree
-from warnings import warn 
 
 import numpy as np 
 import numpy.random as npr 
@@ -23,16 +22,18 @@ def _setup_cache(overwrite: bool = False):
     else: 
         makedirs(cache) 
 
-def synthetic_regression(overwrite: bool = False, **kwargs) -> dict: 
-    global cache 
-    _setup_cache() 
-    path = join(cache, "synthetic_regression.npy")
-
-    if exists(path) and overwrite is True: 
-        remove(path)
+def _clean_or_load(path: str, overwrite: bool): 
+    if exists(path) and overwrite: 
+        remove(path) 
     elif exists(path): 
         with open(path, 'rb') as source: 
             return load(source)
+
+def synthetic_regression(overwrite: bool = False, **kwargs) -> dict: 
+    global cache 
+    _setup_cache() 
+    path = join(cache, "synthetic_regression.pkl")
+    _clean_or_load(path, overwrite) 
 
     def _construct_covariance_matrix(x: np.ndarray, y: np.ndarray, covariance: callable) -> np.ndarray: 
         n, m = len(x), len(y) 
@@ -56,5 +57,10 @@ def synthetic_regression(overwrite: bool = False, **kwargs) -> dict:
 
     return data_dict
 
-def synthetic_classification(): 
+def synthetic_classification(overwrite: bool = False, **kwargs) -> dict: 
+    global cache
+    _setup_cache()
+    path = join(cache, "synthetic_classification.pkl")
+    _clean_or_load(path, overwrite) 
+    # TODO: sample from a mog or something? 
     raise NotImplementedError
